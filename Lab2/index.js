@@ -1,6 +1,20 @@
 
 // Functional Utiilities
 
+function curry (fn, ...curryArgs) {
+  if (typeof fn !== 'function') throw new Error('first argument must be a function');
+  return (...args) => {
+    return fn(...[].concat(curryArgs).concat(args));
+  }
+}
+
+function curryRight (fn, ...curryArgs) {
+  if (typeof fn !== 'function') throw new Error('first argument must be a function');
+  return (...args) => {
+    return fn(...[].concat(args).concat(curryArgs));
+  }
+}
+
 function compose (...args) {
 
   return (a) => args.reduceRight((acc, func) => {
@@ -70,6 +84,18 @@ function sort (a) { // merge sort algorythm
 
 }
 
+function binnarySearch (arr, elem) {
+
+  const procedure = (arr, startIdx, endIdx, elem) => {
+    const length = endIdx - startIdx + 1;
+    if (length === 1) return elem === arr[startIdx] ? startIdx : null;
+    const middleIdx = startIdx + Math.floor((endIdx - startIdx) / 2);
+    return procedure(arr, 0, middleIdx, elem) || procedure(arr, middleIdx + 1, endIdx, elem);
+  }
+
+  return procedure(arr, 0, arr.length - 1, elem);
+}
+
 // Wrapped object.
 class Monad  {
   constructor (state) {
@@ -86,9 +112,12 @@ class Monad  {
   }
 }
 
-const source = [9,1,2,3,4,0,5,6,7,8];
+const source = [9,1,2,3,4,0,6,7,8];
+
 const dest = Monad.do(
   print('Source::'),
   sort,
+  print('Sorted::'),
+  curryRight(binnarySearch, 8),
   print('Result::')
 )(source);
