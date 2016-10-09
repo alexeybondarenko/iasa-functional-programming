@@ -81,12 +81,14 @@ class Monad  {
   result () {
     return this.state;
   }
+  static do (...args) {
+     return a => container(...args)(new Monad(a));
+  }
 }
 
 const source = [9,1,2,3,4,0,5,6,7,8];
-const dest = container(
+const dest = Monad.do(
+  print('Source::'),
   sort,
-  print('Print')
-)(new Monad(source));
-
-console.log('Result:', dest);
+  print('Result::')
+)(source);
