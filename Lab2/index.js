@@ -1,4 +1,10 @@
 
+// helpers
+
+function ordA(a) {
+  return a.charCodeAt(0) - 65;
+}
+
 // Functional Utiilities
 
 function curry (fn, ...curryArgs) {
@@ -13,6 +19,16 @@ function curryRight (fn, ...curryArgs) {
   return (...args) => {
     return fn(...[].concat(args).concat(curryArgs));
   }
+}
+
+function times (n, iterator) {
+  var accum = Array(Math.max(0, n));
+  for (var i = 0; i < n; i++) accum[i] = iterator.call();
+  return accum;
+};
+
+function repeat (source, n_times) {
+  return times(n_times, () => source);
 }
 
 function compose (...args) {
@@ -46,7 +62,7 @@ const print = (prefix = '') => a => {
   return a;
 }
 
-// Sorting algorytm
+// Merge sort algorythm
 
 function merge (a, b) {
 
@@ -96,7 +112,18 @@ function binnarySearch (arr, elem) {
   return procedure(arr, 0, arr.length - 1, elem);
 }
 
-// Wrapped object.
+function beaufortCipher(textSource, keySource, decode = 0) {
+  const key = keySource.toUpperCase().replace(/[^A-Z]/g, '');
+  const text = textSource.toUpperCase().replace(/[^A-Z]/g, '').split('');
+  return text.map(function(a, i) {
+    let b = key[i % key.length];
+    let offset = ((ordA(b) - ordA(a) + Number(decode) * 26) + 26) % 26;
+    return String.fromCharCode(offset + 65);
+  }).join('');
+}
+
+// Monad class object.
+
 class Monad  {
   constructor (state) {
     this.state = state;
@@ -112,12 +139,32 @@ class Monad  {
   }
 }
 
-const source = [9,1,2,3,4,0,6,7,8];
+/// Program
 
-const dest = Monad.do(
+console.log('\nSorting\n');
+
+Monad.do(
   print('Source::'),
   sort,
-  print('Sorted::'),
-  curryRight(binnarySearch, 8),
   print('Result::')
-)(source);
+)([9,1,2,3,4,0,6,7,8]);
+
+console.log('\nSearch\n');
+
+Monad.do(
+  print('Source::'),
+  curryRight(binnarySearch, 'a'),
+  print('Result:: index ->')
+)('haskell');
+
+console.log('\nCipher\n');
+
+const CIPHER_KEY = 'secret';
+
+const destCipher = Monad.do(
+  print('source::'),
+  curryRight(beaufortCipher, CIPHER_KEY),
+  print('Result::'),
+  curryRight(beaufortCipher, CIPHER_KEY, true), // decode
+  print('Decode::')
+)('ABONDARENKO');
