@@ -6,7 +6,7 @@
 // Комп’ютерна гра з різними військами, відповідно,класи «Гра», «Військо», «ФабрикаВійськ», та згідно до варіанту:
 // 1  Китайське Румунське Авіація Танкове Підводні сили
 
-class Game {}
+class Game {
   constructor () {
     this.playerA = ArmyFactory.createChineeseArmy();
     this.playerB = ArmyFactory.createRomanianArmy();
@@ -71,3 +71,41 @@ const compositeExample = () => {
 
 // Strategy 2
 // 2  DataSearch  Search  Interpolation Binary  Depth-first
+
+class Search {
+  exec () {
+    throw new Error('method must be redefined in extending class');
+  }
+}
+
+class InterpolationSearch extends Search {
+  exec (source, elem) {}
+}
+class BinnarySearch extends Search {
+  exec (source, elem) {}
+}
+class DepthFirstSearch extends Search {
+  exec (source, elem) {}
+}
+
+class DataSearch {
+  constructor (strategy) {
+    this.strategy = strategy;
+  }
+  search (source, elem) {
+    return this.strategy.exec(source, elem);
+  }
+};
+
+const strategyExample = () => {
+  const dataSearchBinnary = new DataSearch(new BinnarySearch());
+  const dataSearchInterpolation = new DataSearch(new InterpolationSearch());
+  const dataSearchDepthFirstSearch = new DataSearch(new DepthFirstSearch());
+
+  const SOURCE = [1,2,3,4,5];
+  const SEARCH_ELEM = 2;
+
+  dataSearchBinnary.search(SOURCE, SEARCH_ELEM);
+  dataSearchInterpolation.search(SOURCE, SEARCH_ELEM);
+  dataSearchDepthFirstSearch.search(SOURCE, SEARCH_ELEM);
+}
